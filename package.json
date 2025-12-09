@@ -1,6 +1,6 @@
 {
 	"name": "@yiero/vite-plugin-scriptcat-extract-grant",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"author": "Yiero",
 	"description": "A vite plugin for web script (tampermonkey or scriptcat) extract grant automatically. ",
 	"type": "module",

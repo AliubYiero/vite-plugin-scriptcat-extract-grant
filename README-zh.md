@@ -34,14 +34,14 @@ pnpm add @yiero/vite-plugin-scriptcat-extract-grant -D
 
 ```ts
 import { defineConfig } from 'vite'
-import scriptCatExtractGrant from '@yiero/vite-plugin-scriptcat-extract-grant'
+import extractGrantPlugin from '@yiero/vite-plugin-scriptcat-extract-grant'
 
 export default defineConfig({
   plugins: [
     // 其他插件...
     
     // 自动提取并注入 grant 指令
-    scriptCatExtractGrant()
+    extractGrantPlugin()
   ],	
 })
 ```
@@ -52,14 +52,14 @@ export default defineConfig({
 
 ```ts
 import { defineConfig } from 'vite'
-import scriptCatExtractGrant from '@yiero/vite-plugin-scriptcat-extract-grant'
+import extractGrantPlugin from '@yiero/vite-plugin-scriptcat-extract-grant'
 
 export default defineConfig({
   plugins: [
     // 其他插件...
     
     // 自动提取并注入 grant 指令 (可选)
-    scriptCatExtractGrant([
+    extractGrantPlugin([
         // 仅作为示例, 实际是能够正常识别 GM.cookie 的
     	"GM\\.cookie"
     ])

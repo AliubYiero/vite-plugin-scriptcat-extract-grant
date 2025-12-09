@@ -25,7 +25,7 @@ function extractGrants( header: string ): Set<string> {
  *
  * @param appendGrant - 用户额外需要扫描的 API 名称
  */
-export default function scriptCatExtractGrant( appendGrant: string[] = [] ): Plugin {
+export default function extractGrantPlugin( appendGrant: string[] = [] ): Plugin {
 	// 构建 GM/CAT API 扫描正则（避免每次循环重建）
 	const builtInPatterns = [
 		'GM[_.][a-zA-Z0-9_]+',

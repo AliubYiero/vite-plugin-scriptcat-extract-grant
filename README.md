@@ -34,14 +34,14 @@ Add the plugin in `vite.config.js` / `vite.config.ts`:
 
 ```ts
 import { defineConfig } from 'vite'
-import scriptCatExtractGrant from '@yiero/vite-plugin-scriptcat-extract-grant'
+import extractGrantPlugin from '@yiero/vite-plugin-scriptcat-extract-grant'
 
 export default defineConfig({
   plugins: [
     // Other plugins...
     
     // Automatically extract and inject grant directives
-    scriptCatExtractGrant()
+	  extractGrantPlugin()
   ],	
 })
 ```
@@ -52,14 +52,14 @@ export default defineConfig({
 
 ```ts
 import { defineConfig } from 'vite'
-import scriptCatExtractGrant from '@yiero/vite-plugin-scriptcat-extract-grant'
+import extractGrantPlugin from '@yiero/vite-plugin-scriptcat-extract-grant'
 
 export default defineConfig({
   plugins: [
     // Other plugins...
     
     // Automatically extract and inject grant directives (optional)
-    scriptCatExtractGrant([
+	  extractGrantPlugin([
         // Example only, GM.cookie can actually be recognized normally
     	"GM\\.cookie"
     ])
