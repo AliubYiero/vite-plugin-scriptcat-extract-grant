@@ -1,4 +1,5 @@
 import { Plugin } from 'vite';
+import { ParseUserScript } from './types/UserScript.ts';
 
 /**
  * 从 UserScript 元数据块中提取所有已声明的 @grant 指令值。
@@ -33,17 +34,26 @@ export default function extractGrantPlugin( appendGrant: string[] = [] ): Plugin
 		'window\\.onurlchange',
 		'window\\.close',
 		'window\\.focus',
-		'unsafeWindow',
-		'none'
 	];
 	const allPatterns = [
 		...builtInPatterns,
 		...appendGrant ];
 	const usedApis = new RegExp( `\\b(${allPatterns.join('|')})\\b`, 'g' );
 	
+	let parsedUserScript: ParseUserScript | undefined;
+	
 	return {
 		name: 'vite-plugin-scriptcat-extract-grant',
-		version: '1.0.0',
+		version: '1.0.3',
+		
+		/**
+		 * 获取 vite-plugin-scriptcat-meta-banner 脚本导出的 UserScript
+		 */
+		buildStart( { plugins } ) {
+			const metaPlugin = plugins.find( plugin => plugin.name === 'vite-plugin-scriptcat-meta-banner' );
+			if ( !metaPlugin ) return;
+			parsedUserScript = metaPlugin.api.parsedUserScript;
+		},
 		
 		generateBundle: {
 			order: 'post',  // 后执行
@@ -66,11 +76,29 @@ export default function extractGrantPlugin( appendGrant: string[] = [] ): Plugin
 					// 读取 UserScript 内容
 					const userScriptHeader = trimmedCode.slice( 0, insertPosition );
 					// 提取已经授权的函数列表
-					const existingGrants = extractGrants( userScriptHeader );
+					let existingGrants: Set<string>;
+					if ( parsedUserScript ) {
+						existingGrants = parsedUserScript.filter.reduce( ( result, [ key, value ] ) => {
+							if ( key === 'grant' ) {
+								result.add( value );
+							}
+							return result;
+						}, new Set<string>() );
+					}
+					else {
+						existingGrants = extractGrants( userScriptHeader );
+					}
 					
 					// 获取前一个键名的长度用于对齐
-					const [ _, space = ' ', key ] = trimmedCode.match( /\/\/(\s*)@(\w+\s+).*\r?\n\/\/\s*==\/UserScript==/ ) || [];
-					const indent = key ? key.length - 4 : 0;
+					let indent: number = 0;
+					if ( parsedUserScript ) {
+						indent = parsedUserScript.maxKeyLength;
+					}
+					else {
+						// 获取前一个键名的长度用于对齐
+						const [ , , key ] = trimmedCode.match( /\/\/(\s*)@(\w+\s+).*\r?\n\/\/\s*==\/UserScript==/ ) || [];
+						indent = key ? key.length - 4 : 0;
+					}
 					
 					// 使用正则匹配所有可能的 GM_* / CAT_* 调用（简单高效）
 					const grantMatches = new Set<string>();
@@ -92,7 +120,7 @@ export default function extractGrantPlugin( appendGrant: string[] = [] ): Plugin
 					
 					// 生成新的授权函数
 					const grantLineContent = Array.from( grantMatches )
-						.map( grant => `//${ space }@${ 'grant'.padEnd( indent, ' ' ) }    ${ grant }` )
+						.map( grant => `// @${ 'grant'.padEnd( indent, ' ' ) }    ${ grant }` )
 						.join( '\n' );
 					
 					// 插入新行
