@@ -1,6 +1,6 @@
 # Vite Plugin ScriptCat Extract Grant
 
-English / [中文](./README.zh.md)
+English / [中文](./README-zh.md)
 
 ## Features
 
@@ -101,13 +101,13 @@ window.onurlchange = () => console.log('URL changed');
 // @version     1.0
 // @grant       GM_setValue
 // @grant       GM_getValue
-// @grant       CAT_openInTab
+// @grant       CAT_userConfig
 // @grant       window.onurlchange
 // ==/UserScript==
 
 // Code using undeclared APIs
 GM_getValue('setting');
-CAT_openInTab('https://example.com');
+CAT_userConfig('https://example.com');
 window.onurlchange = () => console.log('URL changed');
 ```
 
